@@ -2,25 +2,26 @@
 Project for Data visualization (COM-480) course @ EPFL
 
 ## Overview
-Analyze the GitHub users’ behavior, explore relations among overall programming language usage and the overlaps in the different languages that programmers use. Show how this changes over time, taking into account monthly activity from February 2011 to the present day.  
+The goal of this project is to analyze the GitHub users’ behavior, explore relations among overall programming language usage and the overlaps in the different languages that programmers use. We also want to show how this changes over time, taking into account monthly activity from February 2011 to the present day. present day.  
 
 ## Motivation
-We use GitHub every day but we don’t know how much other people use it and what is the behaviour of users that are programming in different languages and the relations between languages themselves.
+We use GitHub every day but we don’t know how other people use it and what is the behaviour of users that are programming in different languages and the relations between languages themselves. We wondered do programmers use several languages at the same time and do they "migrate" to new languages when they appear.
 
+## Target audience
+Our target audience are both GitHub’s users and newcomers to the programming world who would like to have an overview of the general behavior on GitHub over a specific time period.
+
+## Related work and inspiration
 Some inspiration for our project can be found on the following links:
  * http://githut.info/ (A Parallel coordinates visualization of most used programming languages on GitHub)
  * http://blog.coderstats.net/github/2013/event-types/ (A Jupyter Notebook with visual overview of GitHub event types from 2013)
  * http://geeksta.net/geeklog/exploring-expressions-emotions-github-commit-messages/ (An exploration of expressions of emotions in commit messages)
- * https://www.youtube.com/watch?v=U_LNo_cSc70 (A video showing the analysis of millions of GitHub commits - What makes developers happy, angry, and everything in between? By Brian Doll and Ilya Grigorik)
+ * https://www.youtube.com/watch?v=U_LNo_cSc70 (A video showing the analysis of millions of GitHub commits - "What makes developers happy, angry, and everything in between?")
 
-
-## Target audience
-Our target audience are both GitHub’s users and newcomers to the programming world who would like to have an overview of the general behavior on GitHub, and comparison of one programming language to another with the possibility to see which is the “closest” one to their preferred language. Also, our audience will be able to do a more statistical analysis of language usage and compare them.
-
-## What am I trying to show with my viz?
-Analyze the interaction of users in projects with different programming languages and the number of commits per language and project over time. For instance, do users who contribute to projects in Scala also contribute more to projects in Java or Python? We also plan to compare statistics for each language with the overall GitHub’s statistics, for instance:
- * Average commits by Pull Request
- * Average number of changes files by language by Pull Request/Commit
+## What are we trying to show with our viz?
+We want to analyze the interaction of users in projects with different programming languages and the number of commits per language and project over time. For instance, do users who contribute to projects in Scala also contribute more to projects in Java or Python?
+The users will be able to compare one programming language to another with the possibility to see which one is the “closest” to their preferred language.  Also, our audience will be able to see a statistical analysis of the usage of the specific language. By selecting a language, the users will be able to see:
+ * Average number of commits by Pull Request for the specific language
+ * Average number of changed files by language by Pull Request/Commit
  * Average number of forks/watchers/followers
  * ...
 
