@@ -8,10 +8,10 @@ Analyze the GitHub users’ behavior, explore relations among overall programmin
 We use GitHub every day but we don’t know how much other people use it and what is the behaviour of users that are programming in different languages and the relations between languages themselves.
 
 Some inspiration for our project can be found on the following links:
-http://githut.info/ (A Parallel coordinates visualization of most used programming languages on GitHub)
-http://blog.coderstats.net/github/2013/event-types/ (A Jupyter Notebook with visual overview of GitHub event types from 2013)
-http://geeksta.net/geeklog/exploring-expressions-emotions-github-commit-messages/ 
-https://www.youtube.com/watch?v=U_LNo_cSc70
+ * http://githut.info/ (A Parallel coordinates visualization of most used programming languages on GitHub)
+ * http://blog.coderstats.net/github/2013/event-types/ (A Jupyter Notebook with visual overview of GitHub event types from 2013)
+ * http://geeksta.net/geeklog/exploring-expressions-emotions-github-commit-messages/ (An exploration of expressions of emotions in commit messages)
+ * https://www.youtube.com/watch?v=U_LNo_cSc70 (A video showing the analysis of millions of GitHub commits - What makes developers happy, angry, and everything in between? by Brian Doll and Ilya Grigorik)
 
 
 ## Target audience
@@ -24,14 +24,14 @@ Analyze the interaction of users among projects with different programming langu
  * Time between open and close (sucess or fail) 
 
 A very broad idea about what we’ll do is in the following image:
-<img src="docs/first-draft.png" alt="Image" width = "70%" height = "70%" align="middle" style = " display: block; margin: auto;"/>
+<p align="center"><img src="docs/first-draft.png" alt="Image" width = "70%" height = "70%" align="middle"/></p>
 
 ## Where does it come from, what are you processing steps?
-The dataset that we will use is the GitHub Archive (https://www.githubarchive.org/). GitHub Archive is a project with the aim to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. The data is available from 12. February 2011. with events aggregated into hourly .json archives. It can be downloaded directly via HTTP or accessed with Google BigQuery.
+The dataset that we will use is the [GitHub Archive](https://www.githubarchive.org/). GitHub Archive is a project with the aim to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. The data is available from 12. February 2011. with events aggregated into hourly .json archives. It can be downloaded directly via HTTP or accessed with Google BigQuery.
 
-The documentation for the different types of events that are recored in the archive is available on the following link: https://developer.github.com/v3/activity/events/types/
+The documentation for the different types of events that are recored in the archive is available on this [link](https://developer.github.com/v3/activity/events/types/).
 
-We might use the information from Google Trends (https://trends.google.com/trends/) to analyze the language’s popularity over time, but this is a topic to discuss yet.
+We might use the information from [Google Trends](https://trends.google.com/trends/) to analyze the language’s popularity over time, but this is a topic to discuss yet.
 
 ## Processing steps:
  1) Filter the database for `PullRequestEvent` entries.
