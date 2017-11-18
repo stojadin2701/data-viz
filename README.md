@@ -41,3 +41,12 @@ We might use the information from [Google Trends](https://trends.google.com/tren
  1) Filter the database for `PullRequestEvent` entries.
  2) Remove entries that have a NULL value for the programming language feature (seems to be a small percentage for pull request)
  3) Analyze this data to reveal the parameters specified above (number of commits by language, file changes by language, number of forks, time between open and close, ...)
+ 
+ 
+## How to run
+In order to run this project you must have `npm` installed in your machine. Then run:
+```bash
+npm install
+npm start
+```
+The last command should spin a new browser tab in http://localhost:8080.
