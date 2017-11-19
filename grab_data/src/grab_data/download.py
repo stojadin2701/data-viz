@@ -13,6 +13,7 @@ from itertools import product
 from urllib import request
 from docopt import docopt
 from datetime import datetime
+from multiprocessing.dummy import Pool as ThreadPool
 
 BASE_URL = 'http://data.githubarchive.org/'
 VALID_EVENTS = ['PullRequestEvent']
@@ -126,7 +127,12 @@ if __name__ == '__main__':
     are_dates_valid(start_date, end_date)
 
     urls = get_urls(start_date, end_date)
-    data = map(read_and_filter, urls)
+
+    pool = ThreadPool(4)
+    data = pool.map(read_and_filter, urls)
+    pool.close()
+    pool.join()
+
     flat_data = [item for sublist in data for item in sublist]
     del data
 
