@@ -2,8 +2,8 @@
 
 set -e
 
-START_DATE=2017-11-17
-END_DATE=2017-11-17
+START_DATE=2017-09-15
+END_DATE=2017-11-15
 FILEPATH=$(dirname `realpath $0`)/src/grab_data/download.py
 ENVPATH=$(dirname `realpath $0`)/data-viz-env/
 

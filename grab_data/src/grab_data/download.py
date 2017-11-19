@@ -66,8 +66,11 @@ def read_file(url):
     decompressed_file = gzip.GzipFile(fileobj=compressed_file)
 
     data = []
-    for line in decompressed_file.readlines():
-        data.append(json.loads(line))
+    for i, line in enumerate(decompressed_file.readlines()):
+        try:  # commit messages with \\ causes issues to parse
+            data.append(json.loads(line))
+        except:
+            log.error('Error to parse line {l} from {u}'.format(l=i, u=url))
 
     return data
 
