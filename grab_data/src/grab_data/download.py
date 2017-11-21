@@ -13,7 +13,6 @@ from itertools import product
 from urllib import request
 from docopt import docopt
 from datetime import datetime
-from multiprocessing.dummy import Pool as ThreadPool
 
 BASE_URL = 'http://data.githubarchive.org/'
 VALID_EVENTS = ['PullRequestEvent']
@@ -120,7 +119,7 @@ def are_dates_valid(start, end):
 if __name__ == '__main__':
     log.getLogger().setLevel(log.INFO)
 
-    arguments = docopt(__doc__, version='FIXME')
+    arguments = docopt(__doc__)
     start_date = arguments['<start-date>']
     end_date = arguments['<end-date>']
 
@@ -128,10 +127,7 @@ if __name__ == '__main__':
 
     urls = get_urls(start_date, end_date)
 
-    pool = ThreadPool(4)
-    data = pool.map(read_and_filter, urls)
-    pool.close()
-    pool.join()
+    data = map(read_and_filter, urls)
 
     flat_data = [item for sublist in data for item in sublist]
     del data
@@ -141,6 +137,6 @@ if __name__ == '__main__':
 
     file_path = os.path.join(os.path.abspath(os.path.join(__file__, '../../../..')),
                              'data', 'data_{s}_{e}.csv'.format(s=start_date, e=end_date))
-    df.to_csv(file_path)
+    df.to_csv(file_path, index=False)
 
     log.info('The data was saved in {f}'.format(f=file_path))
