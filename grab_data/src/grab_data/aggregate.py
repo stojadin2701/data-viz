@@ -8,7 +8,9 @@ import pandas as pd
 import logging as log
 from docopt import docopt
 from datetime import datetime
-from grab_data.download import are_dates_valid
+from itertools import combinations
+
+from grab_data import helpers
 
 COLS_GENERAL_METRICS = ['payload.pull_request.changed_files', 'payload.pull_request.commits',
                         'payload.pull_request.merged', 'payload.pull_request.comments',
@@ -16,33 +18,6 @@ COLS_GENERAL_METRICS = ['payload.pull_request.changed_files', 'payload.pull_requ
                         'days_open_merged', 'creator_merge']
 METRICS = ['mean', 'std', '25%', '50%', '75%']
 LANGUE_COL = ['payload.pull_request.base.repo.language', 'cohort']
-DATA_FOLDER = os.path.join(os.path.abspath(os.path.join(__file__, '../../../..')), 'data')
-
-
-def get_data(path, start_date, end_date):
-    """
-    Concatenate all data by day
-    :param path: path where the raw data in stored
-    :param start_date: string
-    :param end_date: string
-    :return: dataframe with all files concatenated
-    """
-    all_dates = list(map(lambda x:
-                         x.strftime('%Y-%m-%d').replace('-0', '-'),
-                         list(pd.date_range(start_date, end_date))))
-    all_files_requeried = list(map(lambda x: 'data_{d}_{d}.csv'.format(d=x), all_dates))
-    diff = list(set(all_files_requeried) - set(os.listdir(path)))
-
-    if diff:
-        raise ValueError('The following files are not available: {f}'.format(f=diff))
-
-    path_files = list(map(lambda x: os.path.join(path, x), all_files_requeried))
-
-    df = pd.DataFrame()
-    for p in path_files:
-        df = pd.concat([df, pd.read_csv(p)])
-
-    return df
 
 
 def create_new_cols(df):
@@ -59,9 +34,10 @@ def create_new_cols(df):
 
     return df
 
-def aggregate_by_language(df):
+
+def aggregate_stats_metrics(df):
     """
-    Aggregate data by usefull metrics
+    Aggregate statistics of usefull columns
     :param df: dataframe
     :return: dataframe with aggregated informations
     """
@@ -75,16 +51,31 @@ def aggregate_by_language(df):
                                                     'level_1': 'metric',
                                                     'payload.pull_request.base.repo.language': 'language',
                                                     0: 'value'}))
-    agg_by_language = agg_by_language[agg_by_language['metric'].apply(lambda x: x in METRICS)]
-    count_by_language = pd.DataFrame(df
-                                     .groupby(LANGUE_COL)
-                                     .size()
-                                     .reset_index()
-                                     .rename(columns={'payload.pull_request.base.repo.language': 'language',
-                                                      0: 'number_prs'}))
-    return (agg_by_language
-            .merge(count_by_language, on=LANGUE_COL, how='left'))
+    return (agg_by_language[agg_by_language['metric']
+            .apply(lambda x: x in METRICS)])
 
+
+def aggregate_general_metrics(df):
+    """
+    Aggregate data by usefull metrics
+    :param df: dataframe
+    :return: dataframe with aggregated informations
+    """
+    count_prs = pd.DataFrame(df
+                             .groupby(LANGUE_COL)
+                             .size()
+                             .reset_index()
+                             .rename(columns={'payload.pull_request.base.repo.language': 'language',
+                                              0: 'number_prs'}))
+
+    count_actor = pd.DataFrame(df
+                               .groupby(LANGUE_COL)
+                               .nunique()['actor.display_login']
+                               .reset_index()
+                               .rename(columns={'payload.pull_request.base.repo.language': 'language',
+                                                0: 'number_distinct_actors'}))
+
+    return count_prs.merge(count_actor, on=['language', 'cohort'], how='inner')
 
 
 if __name__ == '__main__':
@@ -94,14 +85,21 @@ if __name__ == '__main__':
     start_date = arguments['<start-date>']
     end_date = arguments['<end-date>']
 
-    are_dates_valid(start_date, end_date)
+    helpers.are_dates_valid(start_date, end_date)
 
-    df = get_data(DATA_FOLDER, start_date, end_date)
+    df = helpers.get_data(helpers.DATA_FOLDER, start_date, end_date)
     df = create_new_cols(df)
-    agg_by_language = aggregate_by_language(df)
 
-    file_agg_data = os.path.join(DATA_FOLDER, 'agg_language_{s}_{e}__processedat_{n}.csv'
-                                 .format(s=start_date, e=end_date, n=datetime.now().strftime('%Y-%m-%d')))
-    print(file_agg_data.shape)
-    file_agg_data.to_csv(file_agg_data, index=False)
-    log.info('The data was saved in {f}'.format(f=file_agg_data))
+    # General statistics by language and cohort
+    agg_by_stats = aggregate_stats_metrics(df)
+    file_stats_data = os.path.join(helpers.DATA_FOLDER, 'agg_stats_{s}_{e}__processedat_{n}.csv'
+                                   .format(s=start_date, e=end_date, n=datetime.now().strftime('%Y-%m-%d')))
+    agg_by_stats.to_csv(file_stats_data, index=False)
+    log.info('Statistics of aggregated data was saved in {f}'.format(f=file_stats_data))
+
+    # Count of PRs and unique actors by language and cohort
+    agg_by_general = aggregate_general_metrics(df)
+    file_general_data = os.path.join(helpers.DATA_FOLDER, 'agg_general_{s}_{e}__processedat_{n}.csv'
+                                     .format(s=start_date, e=end_date, n=datetime.now().strftime('%Y-%m-%d')))
+    agg_by_general.to_csv(file_general_data, index=False)
+    log.info('General aggregated data was saved in {f}'.format(f=file_general_data))
