@@ -8,7 +8,6 @@ import pandas as pd
 import logging as log
 from docopt import docopt
 from datetime import datetime
-from itertools import combinations
 
 from grab_data import helpers
 

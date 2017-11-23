@@ -1,237 +1,61 @@
 import * as d3 from 'd3';
 
+var chord = d3.chord()
+    .padAngle(.05);
 
-let wHist = 600;
-let hHist = 250;
-const barPadding = 0.05;
+var matrix = [[0, 5871, 8010, 2868],
+    [5871, 0, 1614, 6171],
+    [8010, 1614, 0, 940],
+    [2868, 990, 940, 0]];
 
-const marginHist = {top: 20, right: 10, bottom: 20, left: 10};
-const widthHist = 600 - marginHist.left - marginHist.right,
-    heightHist = 300 - marginHist.top - marginHist.bottom;
+var w = 600, h = 600, r0 = Math.min(w, h) * .41, r1 = r0 * 1.1;
 
-const maxValue = 100;
-const nDataHist = 20;
+var fill = d3.scaleOrdinal()
+    .domain(d3.range(4))
+    .range(["#000000", "#FFDD89", "#957244", "#F26223"]);
 
-var dataset = [];
-for (var i = 0; i < nDataHist; i++) {
-    var newNumber = Math.floor(Math.random() * 100);
-    dataset.push(newNumber);
+var svg = d3.select("#chord")
+    .append("svg:svg")
+    .attr("width", w)
+    .attr("height", h)
+    .append("svg:g")
+    .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
+
+svg.append("svg:g")
+    .selectAll("path")
+    .data(chord(matrix).groups)
+    .enter()
+    .append("svg:path")
+    .style("fill", function (d) {
+        return fill(d.index);
+    })
+    .style("stroke", function (d) {
+        return fill(d.index);
+    })
+    .attr("d", d3.arc().innerRadius(r0).outerRadius(r1))
+    .on("mouseover", fade(.1))
+    .on("mouseout", fade(1));
+
+
+svg.append("svg:g")
+    .attr("class", "chord")
+    .selectAll("path")
+    .data(chord(matrix).slice(0, 9))
+    .enter()
+    .append("svg:path")
+    .style("fill", function (d) {
+        return fill(d.target.index);
+    })
+    .attr("d", d3.ribbon().radius(r0))
+    .style("opacity", 1);
+
+function fade(opacity) {
+    return function (g, i) {
+        svg.selectAll("g.chord path")
+            .filter(function (d) {
+                return d.source.index != i && d.target.index != i;
+            })
+            .transition()
+            .style("opacity", opacity);
+    };
 }
-
-let xScaleHist = d3.scaleBand()
-    .domain(d3.range(dataset.length))
-    .range([0, widthHist])
-    .round(true)
-    .paddingInner(barPadding);
-
-let yScaleHist = d3.scaleLinear()
-    .domain([0, maxValue + 10])
-    .range([0, heightHist]);
-
-let hist = d3.select("#hist")
-    .append("svg")
-    .attr("width", wHist + marginHist.left + marginHist.right)
-    .attr("height", hHist + marginHist.top + marginHist.bottom);
-
-hist.selectAll("rect")
-    .data(dataset)
-    .enter()
-    .append("rect")
-    .attr("x", function (d, i) {
-        return xScaleHist(i);
-    })
-    .attr("y", function (d) {
-        return heightHist - yScaleHist(d);
-    })
-    .attr("width", xScaleHist.bandwidth())
-    .attr("height", function (d) {
-        return yScaleHist(d);
-    })
-    .attr("fill", function (d) {
-        return "rgb(0, 0, " + Math.round(d * 5) + ")";
-    })
-    .on("mouseover", function () {
-        d3.select(this)
-            .attr("fill", "orange")
-    })
-    .on("mouseout", function (d) {
-        d3.select(this)
-            .transition()
-            .duration(300)
-            .attr("fill", "rgb(0, 0, " + (d * 10) + ")");
-    });
-
-hist.selectAll("text")
-    .data(dataset)
-    .enter()
-    .append("text")
-    .text(function (d) {
-        return d;
-    })
-    .attr("text-anchor", "middle")
-    .attr("x", function (d, i) {
-        return xScaleHist(i) + xScaleHist.bandwidth() / 2;
-    })
-    .attr("y", function (d) {
-        return heightHist - yScaleHist(d) - 5;
-    })
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "11px")
-    .attr("fill", "black");
-
-d3.select("#update_hist")
-    .on("click", function () {
-        const numValues = dataset.length;
-        dataset = [];
-        for (var i = 0; i < numValues; i++) {
-            var newNumber = Math.floor(Math.random() * 100);
-            dataset.push(newNumber);
-        }
-
-        hist.selectAll("rect")
-            .data(dataset)
-            .transition()
-            .duration(3000)
-            .ease(d3.easeLinear)
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d);
-            })
-            .attr("height", function (d) {
-                return yScaleHist(d);
-            })
-            .attr("fill", function (d) {
-                return "rgb(0, 0, " + Math.round(d * 5) + ")"
-            });
-
-        hist.selectAll("text")
-            .data(dataset)
-            .transition()
-            .duration(3000)
-            .ease(d3.easeLinear)
-            .text(function (d) {
-                return d;
-            })
-            .attr("text-anchor", "middle")
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d) - 5;
-            })
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "11px")
-            .attr("fill", "black");
-    });
-
-d3.select("#add_hist")
-    .on("click", function () {
-        let newValue = Math.floor(Math.random() * 100);
-        dataset.push(newValue);
-
-        xScaleHist.domain(d3.range(dataset.length));
-
-        let bars = hist.selectAll("rect").data(dataset);
-
-        bars.enter()
-            .append("rect")
-            .attr("x", widthHist)
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d);
-            })
-            .attr("width", xScaleHist.bandwidth())
-            .attr("height", function (d) {
-                return yScaleHist(d);
-            })
-            .attr("fill", function (d) {
-                return "rgb(0, 0, " + Math.round(d * 5) + ")"
-            })
-            .merge(bars)
-            .transition()
-            .duration(500)
-            .attr("x", function (d, i) {
-                return xScaleHist(i);
-            })
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d);
-            })
-            .attr("width", xScaleHist.bandwidth())
-            .attr("height", function (d) {
-                return yScaleHist(d);
-            });
-
-        let text = hist.selectAll("text").data(dataset);
-
-        text.enter()
-            .append("text")
-            .text(function (d) {
-                return d;
-            })
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                return xScaleHist(i) + xScaleHist.bandwidth() / 2;
-            })
-            .merge(text)
-            .transition()
-            .duration(500)
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                return xScaleHist(i) + xScaleHist.bandwidth() / 2;
-            })
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d) - 5;
-            })
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "11px")
-            .attr("fill", "black");
-    });
-
-
-d3.select("#remove_hist")
-    .on("click", function () {
-        dataset.pop();
-        xScaleHist.domain(d3.range(dataset.length));
-
-        let bars = hist.selectAll("rect").data(dataset);
-
-        bars.exit()
-            .transition()
-            .duration(500)
-            .attr("x", widthHist)
-            .remove();
-
-        let text = hist.selectAll("text").data(dataset);
-
-        text.exit()
-            .transition()
-            .duration(500)
-            .text(function (d) {
-                return d
-            })
-            .attr("x", widthHist)
-            .remove();
-
-        hist.selectAll("rect")
-            .data(dataset)
-            .transition()
-            .duration(500)
-            .attr("x", function (d, i) {
-                return xScaleHist(i);
-            })
-            .attr("y", function (d) {
-                return heightHist - yScaleHist(d);
-            })
-            .attr("width", xScaleHist.bandwidth())
-            .attr("height", function (d) {
-                return yScaleHist(d);
-            })
-            .attr("fill", function (d) {
-                return "rgb(0, 0, " + Math.round(d * 5) + ")";
-            });
-
-        hist.selectAll("text")
-            .data(dataset)
-            .data(dataset)
-            .transition()
-            .duration(500)
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                return xScaleHist(i) + xScaleHist.bandwidth() / 2;
-            })
-    });

@@ -15,6 +15,7 @@ from itertools import combinations
 from grab_data import helpers
 
 COLS = ['payload.pull_request.base.repo.language', 'actor.id', 'created_at']
+TOP_LANGUES = 25
 
 
 def create_new_cols(df):
@@ -34,14 +35,13 @@ def network_connections(df):
     :param df: dataframe
     :return: matrix with the number distinct common actors
     """
-    counts = df['payload.pull_request.base.repo.language'].value_counts()
-    langues = list(counts[counts > 10].index)
-    comb = list(combinations(langues, r=2)) + list(zip(langues, langues))
+    tops = df['payload.pull_request.base.repo.language'].value_counts().iloc[0:TOP_LANGUES].index
+    combs = list(combinations(tops, r=2)) + list(zip(tops, tops))
     df = df.set_index('payload.pull_request.base.repo.language')
 
     common = []
 
-    for l1, l2 in comb:
+    for l1, l2 in combs:
         unique_actors_l1 = pd.Series(df.loc[l1]['actor.id']).unique()
         unique_actors_l2 = pd.Series(df.loc[l2]['actor.id']).unique()
         same_actors = len(set(unique_actors_l1) & set(unique_actors_l2))
@@ -78,4 +78,4 @@ if __name__ == '__main__':
         file_network_data = os.path.join(helpers.DATA_FOLDER, 'network_{s}_{e}__processedat_{n}.csv'
                                          .format(s=start_date, e=end_date, n=datetime.now().strftime('%Y-%m-%d')))
         network.to_csv(file_network_data, index=False)
-        log.info('Network data was saved in {f}'.format(f=network))
+        log.info('Network data was saved in {f}'.format(f=file_network_data))
