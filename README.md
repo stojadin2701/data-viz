@@ -54,6 +54,8 @@ The last command should spin a new browser tab in http://localhost:8080.
 
 ## How to get and process the data
 To download the data, processing and save you must have installed `python3` in your machine and run:
+To download:
 ```bash
-bash grab_data/get-data.sh
+bash grab_data/download-data.sh
 ```
+To aggregate or build the network run the files `grab_data/src/grab_data/aggregate.py` and `grab_data/src/grab_data/network_matrix.py`
