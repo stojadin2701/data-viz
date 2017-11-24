@@ -15,7 +15,7 @@ from itertools import combinations
 from grab_data import helpers
 
 COLS = ['payload.pull_request.base.repo.language', 'actor.id', 'created_at']
-TOP_LANGUES = 25
+TOP_LANGUES = 300
 
 
 def create_new_cols(df):
