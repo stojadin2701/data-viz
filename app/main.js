@@ -5,15 +5,15 @@ const networkDataFile = 'data/network_15_2017-08-01_2017-10-31__processedat_2017
 const languagesDataFile = 'data/langues_15_2017-08-01_2017-10-31__processedat_2017-11-27.csv';
 
 const w = 900,
-    h = 800,
-    rInner = h / 2.4,
-    rOut = rInner - 20,
-    padding = 0.01,
-    textDist = 60;
+      h = 800,
+      rInner = h / 2.4,
+      rOut = rInner - 20,
+      padding = 0.01,
+      textDist = 60;
 
 const margin = {top: 20, right: 20, bottom: 20, left: 20},
-    width = w - margin.left - margin.right,
-    height = h - margin.top - margin.bottom;
+      width = w - margin.left - margin.right,
+      height = h - margin.top - margin.bottom;
 
 
 function getMatrixCommonActors(data) {
