@@ -35,7 +35,8 @@
     "sass-loader": "^2.0.0",
     "style-loader": "^0.13.1",
     "webpack": "^2.1.0-beta.22",
-    "webpack-dev-server": "^2.1.0-beta.8"
+    "webpack-dev-server": "^2.1.0-beta.8",
+    "underscore": "latest"
   },
   "keywords": [
     "es6",

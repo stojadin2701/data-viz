@@ -6,11 +6,11 @@ main 2017-06-11 2017-08-11 --by-month
 main 2017-06-11 2017-08-11"""
 
 import os
+import csv
 import pandas as pd
 import logging as log
 from docopt import docopt
 from datetime import datetime
-from itertools import combinations
 
 from grab_data import helpers
 
@@ -36,7 +36,7 @@ def network_connections(df):
     :return: matrix with the number distinct common actors
     """
     tops = df['payload.pull_request.base.repo.language'].value_counts().iloc[0:TOP_LANGUES].index
-    combs = list(combinations(tops, r=2)) + list(zip(tops, tops))
+    combs = [(x, y) for x in tops for y in tops]
     df = df.set_index('payload.pull_request.base.repo.language')
 
     common = []
@@ -47,7 +47,7 @@ def network_connections(df):
         same_actors = len(set(unique_actors_l1) & set(unique_actors_l2))
         common.append((l1, l2, same_actors))
 
-    return pd.DataFrame(common, columns=['language1', 'language2', 'common_actors'])
+    return tops, pd.DataFrame(common, columns=['language1', 'language2', 'common_actors'])
 
 
 if __name__ == '__main__':
@@ -65,17 +65,27 @@ if __name__ == '__main__':
 
     if by_month:
         cohorts = df['cohort'].unique()
-
-        for cohort in cohorts:
-            network = network_connections(df[df['cohort'] == cohort])
-            file_network_data = os.path.join(helpers.DATA_FOLDER, 'network_{c}__processedat_{n}.csv'
-                                             .format(c=str(cohort), n=datetime.now().strftime('%Y-%m-%d')))
-            network.to_csv(file_network_data, index=False)
-            log.info('Network data was saved in {f}'.format(f=network))
+        #
+        # for cohort in cohorts:
+        #     network = network_connections(df[df['cohort'] == cohort])
+        #     file_network_data = os.path.join(helpers.DATA_FOLDER, 'network_{c}__processedat_{n}.csv'
+        #                                      .format(c=str(cohort), n=datetime.now().strftime('%Y-%m-%d')))
+        #     network.to_csv(file_network_data, index=False)
+        #     log.info('Network data was saved in {f}'.format(f=network))
 
     else:
-        network = network_connections(df)
-        file_network_data = os.path.join(helpers.DATA_FOLDER, 'network_{s}_{e}__processedat_{n}.csv'
-                                         .format(s=start_date, e=end_date, n=datetime.now().strftime('%Y-%m-%d')))
+        langues, network = network_connections(df)
+        file_network_data = os.path.join(helpers.DATA_FOLDER, 'network_{t}_{s}_{e}__processedat_{n}.csv'
+                                         .format(t=TOP_LANGUES, s=start_date, e=end_date,
+                                                 n=datetime.now().strftime('%Y-%m-%d')))
+        file_langues_data = os.path.join(helpers.DATA_FOLDER, 'langues_{t}_{s}_{e}__processedat_{n}.csv'
+                                         .format(t=TOP_LANGUES, s=start_date, e=end_date,
+                                                 n=datetime.now().strftime('%Y-%m-%d')))
+
+        with open(file_langues_data, "w") as output:
+            writer = csv.writer(output, lineterminator='\n')
+            writer.writerows([x.split(',') for x in langues])
+
         network.to_csv(file_network_data, index=False)
         log.info('Network data was saved in {f}'.format(f=file_network_data))
+        log.info('Langues was saved in {f}'.format(f=file_langues_data))
