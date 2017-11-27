@@ -156,31 +156,6 @@ function drawChord(matrix, labels, generalMetrics) {
                 .style("visibility", showInfos);
         }
     }
-
-    // function fadeChord(opacityArcs, opacityChords,visibility) {
-    //     return function(g, i) {
-    //
-    //         svg.selectAll(".chord path")
-    //             .filter(function(d,j) { return j!=i; })
-    //             .transition()
-    //             .style("opacity", opacityChords);
-    //         svg.selectAll(".arc path")
-    //             .filter(function(d) { return !(d.index == g.source.index || d.index == g.target.index); })
-    //             .transition()
-    //             .style("opacity", opacityArcs);
-    //
-    //         tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
-    //         var a = neurons[sortNeuronInds[g.source.index]][0];
-    //         var a = a.substring(0,a.length-8);
-    //         var b = neurons[sortNeuronInds[g.target.index]][0];
-    //         var b = b.substring(0,b.length-8);if(tooltip.style("visibility")=="hidden")
-    //             tooltip.style("visibility", "visible");
-    //
-    //         if(visibility=="visible")
-    //             tooltip.text(a+" to "+b);
-    //
-    //     };
-    // }
 }
 
 
