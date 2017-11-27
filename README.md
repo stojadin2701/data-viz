@@ -41,3 +41,21 @@ We might use the information from [Google Trends](https://trends.google.com/tren
  1) Filter the database for `PullRequestEvent` entries.
  2) Remove entries that have a NULL value for the programming language feature (seems to be a small percentage for pull request)
  3) Analyze this data to reveal the parameters specified above (number of commits by language, file changes by language, number of forks, time between open and close, ...)
+ 
+ 
+## How to run the application
+In order to run this project you must have `npm` installed in your machine. Then run:
+```bash
+npm install
+npm start
+```
+The last command should spin a new browser tab in http://localhost:8080.
+
+
+## How to get and process the data
+To download the data, processing and save you must have installed `python3` in your machine and run:
+To download:
+```bash
+bash grab_data/download-data.sh
+```
+To aggregate or build the network run the files `grab_data/src/grab_data/aggregate.py` and `grab_data/src/grab_data/network_matrix.py`
