@@ -9,7 +9,7 @@ const w = 900,
     rInner = h / 2.4,
     rOut = rInner - 20,
     padding = 0.01,
-    textDist = 40;
+    textDist = 60;
 
 const margin = {top: 20, right: 20, bottom: 20, left: 20},
     width = w - margin.left - margin.right,
@@ -58,7 +58,8 @@ function rowConverter(d) {
 function drawChord(matrix, labels, generalMetrics) {
     let fill = d3.scaleOrdinal(d3.schemeCategory20);
     let chord = d3.chord().padAngle(padding);
-    var div = d3.select("#chord")
+
+    let metricsBox = d3.select("#chord")
         .append("div")
         .attr("class", "box")
         .style("visibility", "hidden");
@@ -82,9 +83,10 @@ function drawChord(matrix, labels, generalMetrics) {
         .style("stroke", function (d) {
             return fill(d.index);
         })
+        .style("opacity", 0.5)
         .attr("d", d3.arc().innerRadius(rOut).outerRadius(rInner))
         .on("mouseover", fade(0.05, "visible"))
-        .on("mousemove", div.style("opacity", 0.9))
+        .on("mousemove", fade(0.05, "visible"))
         .on("mouseout", fade(1, "hidden"));
 
 
@@ -94,8 +96,11 @@ function drawChord(matrix, labels, generalMetrics) {
         .data(chord(matrix))
         .enter()
         .append("svg:path")
+        .filter(function (d) {
+            return d.source.index != d.target.index;
+        })
         .style("fill", function (d) {
-            return fill(d.target.index);
+                return fill(d.source.index);
         })
         .attr("d", d3.ribbon().radius(rOut))
         .style("opacity", 1);
@@ -115,23 +120,24 @@ function drawChord(matrix, labels, generalMetrics) {
             return fill(d.index);
         });
 
+
     g.append("text")
+        .attr("class", "labels")
+        .style("text-anchor", "middle")
+        .attr("xlink:href", "#wavy")
+        .attr("startOffset", "50%")
         .each(function (d) {
             d.angle = ((d.startAngle + d.endAngle) / 2);
-        })
-        .attr("dy", ".35em")
-        .attr("class", "titles")
-        .attr("text-anchor", function (d) {
-            return d.angle > Math.PI ? "end" : null;
         })
         .attr("transform", function (d) {
             return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
                 + "translate(" + (Math.min(width, height) / 2 - textDist) + ")"
-                + (d.angle > Math.PI ? "rotate(180)" : "")
+                + "rotate(90)"
         })
         .text(function (d, i) {
             return labels[i];
         });
+
 
     function fade(opacity, showInfos) {
         return function (g, i) {
@@ -141,17 +147,40 @@ function drawChord(matrix, labels, generalMetrics) {
                 })
                 .transition()
                 .style("opacity", opacity);
-            if (showInfos=="visible") {
-                div.text("uia")
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 50) + "px")
-                    // .style("opacity", 1);
+
+            if (showInfos == "visible") {
+                metricsBox.text("uia")
             }
-            div.style("left", (d3.event.pageX) + "px")
+            metricsBox.style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 50) + "px")
                 .style("visibility", showInfos);
         }
     }
+
+    // function fadeChord(opacityArcs, opacityChords,visibility) {
+    //     return function(g, i) {
+    //
+    //         svg.selectAll(".chord path")
+    //             .filter(function(d,j) { return j!=i; })
+    //             .transition()
+    //             .style("opacity", opacityChords);
+    //         svg.selectAll(".arc path")
+    //             .filter(function(d) { return !(d.index == g.source.index || d.index == g.target.index); })
+    //             .transition()
+    //             .style("opacity", opacityArcs);
+    //
+    //         tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+    //         var a = neurons[sortNeuronInds[g.source.index]][0];
+    //         var a = a.substring(0,a.length-8);
+    //         var b = neurons[sortNeuronInds[g.target.index]][0];
+    //         var b = b.substring(0,b.length-8);if(tooltip.style("visibility")=="hidden")
+    //             tooltip.style("visibility", "visible");
+    //
+    //         if(visibility=="visible")
+    //             tooltip.text(a+" to "+b);
+    //
+    //     };
+    // }
 }
 
 
