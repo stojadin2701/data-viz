@@ -1,5 +1,5 @@
-import * as d3 from 'd3';
-import * as _ from 'underscore';
+//import * as d3 from 'd3';
+//import * as _ from 'underscore';
 
 const networkDataFile = 'data/network_15_2017-08-01_2017-10-31__processedat_2017-11-27.csv';
 const languagesDataFile = 'data/langues_15_2017-08-01_2017-10-31__processedat_2017-11-27.csv';
