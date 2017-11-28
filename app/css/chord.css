@@ -1,30 +1,16 @@
-/*!
- * Start Bootstrap - Blog Home (https://startbootstrap.com/template-overviews/blog-home)
- * Copyright 2013-2017 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-blog-home/blob/master/LICENSE)
- */
-
-/*body {*/
-    /*padding-top: 54px;*/
-/*}*/
-
-/*@media (min-width: 992px) {*/
-    /*body {*/
-        /*padding-top: 56px;*/
-    /*}*/
-/*}*/
-
 div.box {
     position: absolute;
     text-align: center;
-    width: 60px;
-    height: 28px;
+    width: 150px;
+    height: 80px;
     padding: 2px;
     font: 12px sans-serif;
-    background: darkgray;
+    background-color: #333;
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
+    z-index: 10;
+    border-radius: 4px;
 }
 
 .labels {

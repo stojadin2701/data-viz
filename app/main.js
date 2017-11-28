@@ -149,9 +149,12 @@ function drawChord(matrix, labels, generalMetrics) {
                 .style("opacity", opacity);
 
             if (showInfos == "visible") {
-                metricsBox.text("uia")
+                let language = labels[i];
+                metricsBox.text("Coucou! I'm " + language + "+ details soon!!")
             }
-            metricsBox.style("left", (d3.event.pageX) + "px")
+            metricsBox
+                .style("color", "red")
+                .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 50) + "px")
                 .style("visibility", showInfos);
         }
